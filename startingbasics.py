@@ -18,7 +18,7 @@ def check_seo_criteria(url):
     # 変数scoreを初期化
     score = 0
 
-    # 1. タイトルタグが適切な長さである。(10点)
+    print# 1. タイトルタグが適切な長さである。(10点)
     # タイトルタグの取得
     title_tag = soup.title
     if title_tag is None:
@@ -69,6 +69,8 @@ def check_seo_criteria(url):
     if h1_tags is None:
         # ヘッダータグ<h1>が存在しない場合は0点
         score += 0
+    elif not h1_tags:
+        score += 0
     else:
         # メタ説明タグが存在する場合は文字数をチェック
         h1_text = h1_tags[0].text.strip()
@@ -107,10 +109,11 @@ def check_seo_criteria(url):
     # 6. モバイルポンシブ対応 (10点)
     # （完璧に書くとかなり面倒なのでmeta_viewportタグがあって、device-widthが指定されていれば対応とみなす）
     meta_viewport = soup.find('meta', attrs={'name': 'viewport'})
-    if meta_viewport or 'width=device-width' in meta_viewport.get('content', ''):
-        score += 10
-    else:
-        score += 0
+    if meta_viewport:
+        if 'width=device-width' in meta_viewport.get('content', ''):
+            score += 10
+        else:
+            score += 0
 
     # 7. ページスピード (20点)
     desktop_url = f'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={url}&strategy=desktop'
@@ -126,9 +129,10 @@ def check_seo_criteria(url):
 
     # 8. コンテンツの長さ (5点)
     main_content = soup.find('main')
-    main_content_text_z2h = zenhan.z2h(main_content.text, mode=2, ignore=())
-    if len(main_content_text_z2h) >= 300:
-        score += 10
+    if main_content: 
+        main_content_text_z2h = zenhan.z2h(main_content.text, mode=2, ignore=())
+        if len(main_content_text_z2h) >= 300:
+            score += 10
 
     # 9. インバウンドリンクのチェック (20点)
     # 入力されたurlからドメインを抽出する
@@ -150,19 +154,14 @@ def check_seo_criteria(url):
         score += 20
 
     # 10. ソーシャルメディア連携 (5点)
-    """
-    try cach 分で先に以下を試す。
-    startswith() メソッドは、文字列（str 型）の先頭が指定した文字列で始まる場合に True を返すメソッドです。例えば、"http://www.example.com"という文字列に対して startswith('http') を呼び出すと、Trueが返ります。
-
-    しかしながら、今回のエラーは 'NoneType' object has no attribute 'startswith' と出ていますので、startswith()メソッドが None型の変数に対して呼び出されたためにエラーが発生しているということです。具体的には、link.get('href')が Noneを返したことが原因の可能性があります。
-
-    このエラーを回避するために、hrefがNoneの場合は startswith() メソッドを呼び出す前に、if文でチェックを行い、hrefが存在する場合のみ startswith() メソッドを呼び出すようにすることが必要です。
-    """
-    social_links = soup.find_all('a', href=lambda href: href.startswith('https://twitter.com/') or href.startswith('https://www.facebook.com/'))
-    if not href or not social_links or len(social_links) < 2:
-        score += 0
-    else:
-        score +=5
+    social_links = soup.find_all('a')
+    for link in social_links:
+        href = link.get('href')
+        if href and (href.startswith('https://twitter.com/') or href.startswith('https://www.facebook.com/')):
+            score += 5
+            break
+        else:
+            score += 0
 
     return (score / 100) * 100  # return score as percentage
 
@@ -175,4 +174,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     url = sys.argv[1]
-    check_seo_criteria(url)
+    
+    print (check_seo_criteria(url))
