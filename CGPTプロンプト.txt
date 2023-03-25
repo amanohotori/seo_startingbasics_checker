@@ -436,3 +436,45 @@ if __name__ == "__main__":
     
     print (check_seo_criteria(url), "点です。" )
 "
+
+## 命令書:
+この プログラム は変数 url で受け取ったURLのリンク先ページで、ページの通信スピードを調査して、デスクトップスピード、モバイルスピードを診断して、0～20点のスコアを score に代入する プログラム です。
+実行すると、 エラー が出てしまう。
+以下の プログラム と エラー を読んで、制約条件に従いながら考えうる原因を説明して、解決策を示してください。また、 エラー を回避できるデバッグされたコードを出力しなさい。
+
+## 制約条件:
+・必要なライブラリはインポート済みとする。
+・変数 url は有効なURL ("http://abehiroshi.la.coocan.jp/") が定義済みとする。
+・前後はエラーとたぶん関係ないので、 プログラム は129行目から146行目までの抜粋である。
+
+## プログラム:
+"
+    print("7. ページスピード (20点)")
+    desktop_url = f'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={url}&strategy=desktop'
+    mobile_url = f'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={url}&strategy=mobile'
+    desktop_response = requests.get(desktop_url)
+    mobile_response = requests.get(mobile_url)
+    desktop_speed = desktop_response.json()['lighthouseResult']['categories']['performance']['score']
+    mobile_speed = mobile_response.json()['lighthouseResult']['categories']['performance']['score']
+    if desktop_speed >= 0.9:
+        print("デスクトップスピード合格(10点)")
+        score += 10
+    else:
+        print("デスクトップスピード不合格(0点)")
+    if mobile_speed >= 0.9:
+        print("モバイルスピード合格(10点)")
+        score += 10
+    else:
+        print("モバイルスピード不合格(0点)")
+    print(f"現在のスコア {score}/100")
+"
+
+## エラー:
+"
+Traceback (most recent call last):
+  File "c:\proot_local\githubroot\seo\startingbasics.py", line 205, in <module>
+    result_score = check_seo_criteria(url)
+  File "c:\proot_local\githubroot\seo\startingbasics.py", line 134, in check_seo_criteria
+    desktop_speed = desktop_response.json()['lighthouseResult']['categories']['performance']['score']
+KeyError: 'lighthouseResult'
+"
