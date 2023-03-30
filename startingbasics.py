@@ -100,7 +100,7 @@ def check_seo_criteria(url):
     print("5. 画像に alt （バリアフリーのための短い要約）が適切に付与されているかのチェック(10点)")
     img_tags = soup.find_all('img')
     if not img_tags:
-        print("そもそもページに画像が存在しなければ +10点（減点なし）")
+        print("そもそもページに画像が存在しない +10点（減点なし）")
         score += 10
     else:
         alt_counts = 0
@@ -110,10 +110,10 @@ def check_seo_criteria(url):
             else:
                 alt_counts += 1
         if alt_counts == len(img_tags):
-            print("画像すべてに2文字以上のaltがあれば +10点")
+            print("画像すべてに2文字以上のaltがある +10点")
             score += 10
         else:
-            print("altのない画像があれば +0点")
+            print("altのない画像がある +0点")
             score += 0
     print(f"現在のスコア : {score}/100")
 
@@ -200,17 +200,21 @@ def check_seo_criteria(url):
 
     print("10. ソーシャルメディア連携 (5点)")
     social_links = soup.find_all('a')
+    count_snslink = 0
     for link in social_links:
         href = link.get('href')
         if href and (href.startswith('https://twitter.com/') or href.startswith('https://www.facebook.com/')):
-            print("Twitter または Facebook へのリンクが1つ以上存在する +5点")
-            score += 5
-            break
-        else:
-            score += 0
+            count_snslink +=1
+    if count_snslink > 0:
+        print("Twitter または Facebook へのリンクが1つ以上存在する +5点")
+        score += 5
+    else:
+        print("Twitter または Facebook へのリンクがない +0点")
+        score += 0
+
     print(f"現在のスコア : {score}/100")
 
-    return (score / 100) * 10  # return score as percentage
+    return (score / 100) * 100  # return score as percentage
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -222,5 +226,7 @@ if __name__ == "__main__":
 
     url = sys.argv[1]
     result_score = check_seo_criteria(url)
-    print (F"URLのウェブページのSEO対策評価はリザルトは : {result_score}点 / 100")
-    print (F"リザルト : {result_score}点 / 100")
+    print ("URLのウェブページのSEO対策評価採点、")
+    print (F"リザルト : {result_score}点 / 100点満点中")
+    print ("※ 注意1: この startingbasics プログラムによる診断でわかるのは、SEO対策の基礎の基礎が出来ているかだけです。たとえこの診断で100点満点が出たとしても、SEO対策が完璧であることにはなりません。素晴らしいサイトを作るのは、そこからが始まりです。逆に、この診断で100点満点がでなかったサイトは、基礎的な部分に問題があります。出力をよく読んで、減点された項目に合致するようにページを修正して、最低限この診断で100点満点がでるようにましょう。")
+    print ("※ 注意2: Google検索のスコアリング基準は日々変化します。このプログラムが有効である期間は短いでしょう。このプログラムを有効なものとするには、日々のメンテナンスが必要です。プロトタイプである現バージョンでは、各採点基準が関数化されていませんが、メンテナンス性のためには、各採点プロセスを関数化して、配点を変えられるようにする改修が必要となるでしょう。")
