@@ -23,4 +23,4 @@
 　本プログラムの使用によって起こる、不利益や損害、その他あらゆるトラブルに対して、プログラム開発者は責任を負いません。
  
  ## author
- Amano Hotori aka Pak HyongOk
+ Amano Hotori
